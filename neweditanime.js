@@ -10,7 +10,8 @@ $.when($.ready).then(async function() {
 		animeId = urlParams.get('animeid');
 		
 		if (animeId === null) {
-			$("#submitButton").html("Create");
+			$("#saveButton").html("Create");
+			$("#submitButton").html("Create & Close");
 		}
 		
 		const sourcesResponse = await fetch(`${baseURL}/sources`);
@@ -208,7 +209,7 @@ function watchAnime(watchPartnerId) {
 	window.location.href = `/neweditwatchthrough.html?animeid=${animeId}&partnerid=${watchPartnerId}`;
 }
 
-async function submitAnime() {
+async function saveData() {
 	let title = $("#title").val();
 	let notes = $("#notes").val();
 	let review = $("#review").val();
@@ -260,5 +261,16 @@ async function submitAnime() {
 		throw new Error(`Response status: ${saveResponse.status}`);
 	}
 	
+	const responseData = await saveResponse.json();
+	return responseData["message"]
+}
+
+async function saveAnime() {
+	let animeId = await saveData();
+	window.location.href = `/neweditanime.html?animeid=${animeId}`;
+}
+
+async function submitAnime() {
+	await saveData();
 	window.location.href = "/";
 }
