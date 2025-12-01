@@ -15,8 +15,14 @@
 	</div>
 	<div class="searchContainer">
 		<div>
-			<label>Search</label>
+			<label>Title</label>
 			<input type="text" id="titleSearch" onkeyup="textSearch()" />
+		</div>
+		<div>
+			<label>Watching with</label>
+			<select id="partnerSearch" onchange="textSearch()">
+				<option value="">Any</option>
+			</select>
 		</div>
 	</div>
 	<table id="animetable"></table>

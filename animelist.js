@@ -9,11 +9,11 @@ displayRows = {
 }
 columns = [];
 data = [];
+partnersList = [];
 
 $.when($.ready).then(async function() {
-	const url = `${baseURL}/allanime`
 	try {
-		const response = await fetch(url);
+		const response = await fetch(`${baseURL}/allanime`);
 		if (!response.ok) {
 		  throw new Error(`Response status: ${response.status}`);
 		}
@@ -22,13 +22,27 @@ $.when($.ready).then(async function() {
 		columns = result["message"]["columns"];
 		data = result["message"]["rows"]
 		
+		const partnersResponse = await fetch(`${baseURL}/watchpartners`);
+		if (!partnersResponse.ok) {
+			throw new Error(`Response status: ${partnersResponse.status}`);
+		}
+		
+		const partnersResult = await partnersResponse.json();
+		partnersList = partnersResult["message"]["rows"];
+		
+		let partnersDropdown = $("#partnerSearch");
+		for (let row = 0; row < partnersList.length; row++) {
+			let rowData = partnersList[row];
+			partnersDropdown.append($(`<option value=${rowData[0]}>${rowData[1]}</option>`));
+		}
+		
 		buildTable();
 	} catch (error) {
 		console.error(error.message);
 	}
 });
 
-function buildTable(titleSearch) {
+function buildTable(titleSearch, partnerId) {
 	let table = $("#animetable");
 	table.empty();
 	
@@ -42,10 +56,13 @@ function buildTable(titleSearch) {
 	table.append(headerRow);
 	
 	let titleIndex = columns.findIndex((col) => col === "Title");
+	let activePartnersIndex = columns.findIndex((col) => col === "WatchPartnersActive");
 	
 	let isEven = true;
 	for (let row = 0; row < data.length; row++) {
-		if (!titleSearch || data[row][titleIndex].toLowerCase().includes(titleSearch)) {
+		let activePartners = data[row][activePartnersIndex]?.split(",");
+		if ((!titleSearch || data[row][titleIndex].toLowerCase().includes(titleSearch)) &&
+			(!partnerId || activePartners?.includes(partnerId))) {
 			let parity = isEven ? "even" : "odd"
 			isEven = !isEven;
 			let rowElem = $(`<tr class='${parity}'>`);
@@ -69,7 +86,7 @@ function buildTable(titleSearch) {
 }
 
 function textSearch() {
-	buildTable($("#titleSearch").val().toLowerCase());
+	buildTable($("#titleSearch").val().toLowerCase(), $("#partnerSearch").val());
 }
 
 async function navigateToRandomAnime() {
