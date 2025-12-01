@@ -98,3 +98,7 @@ async function navigateToRandomAnime() {
 	const result = await response.json();
 	window.location.href = `/neweditanime.html?animeid=${result["message"]}`
 }
+
+async function downloadBackup() {
+	window.location.href = `${baseURL}/backup`;
+}
