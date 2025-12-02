@@ -267,10 +267,10 @@ async function saveData() {
 
 async function saveAnime() {
 	let animeId = await saveData();
-	window.location.href = `/neweditanime.html?animeid=${animeId}`;
+	if (animeId) window.location.href = `/neweditanime.html?animeid=${animeId}`;
 }
 
 async function submitAnime() {
-	await saveData();
-	window.location.href = "/";
+	let animeId = await saveData();
+	if (animeId) window.location.href = "/";
 }
