@@ -42,7 +42,11 @@ $.when($.ready).then(async function() {
 	}
 });
 
-function buildTable(titleSearch, partnerId) {
+function find(row, column) {
+	return row[columns.findIndex((col) => col === column)]
+}
+
+function buildTable(titleSearch, partnerId, reviewPending) {
 	let table = $("#animetable");
 	table.empty();
 	
@@ -55,14 +59,15 @@ function buildTable(titleSearch, partnerId) {
 	}
 	table.append(headerRow);
 	
-	let titleIndex = columns.findIndex((col) => col === "Title");
-	let activePartnersIndex = columns.findIndex((col) => col === "WatchPartnersActive");
+	let reviewIndex = columns.findIndex((col) => col === "Review");
+	let completionIndex = columns.findIndex((col) => col === "Completion");
 	
 	let isEven = true;
 	for (let row = 0; row < data.length; row++) {
-		let activePartners = data[row][activePartnersIndex]?.split(",");
-		if ((!titleSearch || data[row][titleIndex].toLowerCase().includes(titleSearch)) &&
-			(!partnerId || activePartners?.includes(partnerId))) {
+		let activePartners = find(data[row], "WatchPartnersActive")?.split(",");
+		if ((!titleSearch || find(data[row], "Title").toLowerCase().includes(titleSearch)) &&
+			(!partnerId || activePartners?.includes(partnerId)) &&
+			(!reviewPending || (!find(data[row], "Review") && find(data[row], "Completion") >= 2))) {
 			let parity = isEven ? "even" : "odd"
 			isEven = !isEven;
 			let rowElem = $(`<tr class='${parity}'>`);
@@ -86,7 +91,7 @@ function buildTable(titleSearch, partnerId) {
 }
 
 function textSearch() {
-	buildTable($("#titleSearch").val().toLowerCase(), $("#partnerSearch").val());
+	buildTable($("#titleSearch").val().toLowerCase(), $("#partnerSearch").val(), $("#reviewPending").prop("checked"));
 }
 
 async function navigateToRandomAnime() {
