@@ -80,6 +80,11 @@ a:visited {
 	margin-top: 0px;
 }
 
+#extraControls, #tagControls {
+	display: inline-block;
+	margin-top: 10px;
+}
+
 #extrasDiv input[type=text] {
 	width: 100px;
 }
