@@ -82,7 +82,7 @@ a:visited {
 
 #extraControls, #tagControls {
 	display: inline-block;
-	margin-top: 10px;
+	margin-top: 7px;
 }
 
 #extrasDiv input[type=text] {
