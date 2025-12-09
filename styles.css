@@ -97,3 +97,8 @@ a:visited {
 	margin-top: 5px;
 	display: inline-block;
 }
+
+#queryDropdowns > div {
+	margin-top: 5px;
+	margin-left: 5px;
+}
