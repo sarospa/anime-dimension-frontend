@@ -71,6 +71,11 @@ a:visited {
 	font-weight: bold;
 }
 
+.dangerButton {
+	color: red;
+	float: right;
+}
+
 .formContainer > div {
 	margin-left: 5px;
 	margin-top: 10px;

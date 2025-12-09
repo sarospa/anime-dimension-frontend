@@ -274,3 +274,12 @@ async function submitAnime() {
 	let animeId = await saveData();
 	if (animeId) window.location.href = "/";
 }
+
+async function deleteAnime() {
+	if (!confirm("Really delete this anime?")) return;
+	if (!confirm("Are you sure? This is permanent.")) return;
+	await fetch(`${baseURL}/deleteanime/${animeId}`, {
+        method: 'DELETE',
+    });
+	window.location.href = "/";
+}
