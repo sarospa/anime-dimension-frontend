@@ -40,11 +40,12 @@ function find(row, column) {
 
 function search() {
 	let partnerSearch = $("#partnerSearch");
+	let activeCheckbox = $("#isActive");
 	
-	buildTable(partnerSearch.val());
+	buildTable(partnerSearch.val(), activeCheckbox.prop("checked"));
 }
 
-function buildTable(partnerId) {
+function buildTable(partnerId, isActive) {
 	let table = $("#watchthroughtable");
 	table.empty();
 	
@@ -59,7 +60,8 @@ function buildTable(partnerId) {
 	
 	let isEven = true;
 	for (let row = 0; row < data.length; row++) {
-		if (!partnerId || partnerId == find(data[row], "WatchPartnerId")) {
+		if ((!partnerId || partnerId == find(data[row], "WatchPartnerId")) &&
+			(!isActive || find(data[row], "IsActive") == "1")) {
 			let parity = isEven ? "even" : "odd"
 			isEven = !isEven;
 			let rowElem = $(`<tr class='${parity}'>`);
