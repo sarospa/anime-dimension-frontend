@@ -157,6 +157,7 @@ function toggleQueryValueField(queryNumber) {
 		$(`#query-${queryNumber}`).append($("<input type='text' class='queryValue' onkeyup='querySearch()' />"));
 		updateQueryValueField(queryNumber);
 	}
+	querySearch();
 }
 
 function deleteQuery(queryNumber) {
