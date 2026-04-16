@@ -9,7 +9,7 @@ $.when($.ready).then(async function() {
 		animeId = urlParams.get('animeid');
 		partnerId = urlParams.get('partnerid');
 		
-		const watchthroughResponse = await fetch(`${baseURL}/watchthrough/${animeId}/${partnerId}`);
+		const watchthroughResponse = await fetchWithRetry(`${baseURL}/watchthrough/${animeId}/${partnerId}`);
 		if (!watchthroughResponse.ok) {
 		  throw new Error(`Response status: ${watchthroughResponse.status}`);
 		}
@@ -97,7 +97,7 @@ async function submitWatchthrough() {
 		}
 	});
 	
-	const saveResponse = await fetch(saveRequest);
+	const saveResponse = await fetchWithRetry(saveRequest);
 	if (!saveResponse.ok) {
 		throw new Error(`Response status: ${saveResponse.status}`);
 	}

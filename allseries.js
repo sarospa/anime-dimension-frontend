@@ -9,7 +9,7 @@ notesLimit = 100;
 $.when($.ready).then(async function() {
 	const url = `${baseURL}/series`
 	try {
-		const response = await fetch(url);
+		const response = await fetchWithRetry(url);
 		if (!response.ok) {
 		  throw new Error(`Response status: ${response.status}`);
 		}

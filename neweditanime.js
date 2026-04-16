@@ -14,7 +14,7 @@ $.when($.ready).then(async function() {
 			$("#submitButton").html("Create & Close");
 		}
 		
-		const sourcesResponse = await fetch(`${baseURL}/sources`);
+		const sourcesResponse = await fetchWithRetry(`${baseURL}/sources`);
 		if (!sourcesResponse.ok) {
 		  throw new Error(`Response status: ${sourcesResponse.status}`);
 		}
@@ -27,7 +27,7 @@ $.when($.ready).then(async function() {
 			sourceDropdown.append($(`<option value='${rowData[0]}'>${rowData[1]}</option>`))
 		}
 		
-		const tagsResponse = await fetch(`${baseURL}/tags`);
+		const tagsResponse = await fetchWithRetry(`${baseURL}/tags`);
 		if (!tagsResponse.ok) {
 			throw new Error(`Response status: ${tagsResponse.status}`);
 		}
@@ -35,7 +35,7 @@ $.when($.ready).then(async function() {
 		const tagsData = await tagsResponse.json();
 		allTags = tagsData["message"]["rows"];
 		
-		const seriesResponse = await fetch(`${baseURL}/series`);
+		const seriesResponse = await fetchWithRetry(`${baseURL}/series`);
 		if (!seriesResponse.ok) {
 			throw new Error(`Response status: ${seriesResponse.status}`);
 		}
@@ -48,7 +48,7 @@ $.when($.ready).then(async function() {
 			seriesDropdown.append($(`<option value='${rowData[0]}'>${rowData[1]}</option>`))
 		}
 		
-		const partnersResponse = await fetch(`${baseURL}/watchpartners`);
+		const partnersResponse = await fetchWithRetry(`${baseURL}/watchpartners`);
 		if (!partnersResponse.ok) {
 			throw new Error(`Response status: ${partnersResponse.status}`);
 		}
@@ -62,7 +62,7 @@ $.when($.ready).then(async function() {
 		}
 		
 		if (animeId !== null) {
-			const animeResponse = await fetch(`${baseURL}/anime/${animeId}`);
+			const animeResponse = await fetchWithRetry(`${baseURL}/anime/${animeId}`);
 			if (!animeResponse.ok) {
 			  throw new Error(`Response status: ${animeResponse.status}`);
 			}
@@ -256,7 +256,7 @@ async function saveData() {
 			'Content-Type': 'application/json',
 		}
 	});
-	const saveResponse = await fetch(saveRequest);
+	const saveResponse = await fetchWithRetry(saveRequest);
 	if (!saveResponse.ok) {
 		throw new Error(`Response status: ${saveResponse.status}`);
 	}
@@ -278,7 +278,7 @@ async function submitAnime() {
 async function deleteAnime() {
 	if (!confirm("Really delete this anime?")) return;
 	if (!confirm("Are you sure? This is permanent.")) return;
-	await fetch(`${baseURL}/deleteanime/${animeId}`, {
+	await fetchWithRetry(`${baseURL}/deleteanime/${animeId}`, {
         method: 'DELETE',
     });
 	window.location.href = "/";

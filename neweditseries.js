@@ -9,7 +9,7 @@ $.when($.ready).then(async function() {
 			$("#submitButton").html("Create");
 		}
 		else {
-			const seriesResponse = await fetch(`${baseURL}/series/${seriesId}`);
+			const seriesResponse = await fetchWithRetry(`${baseURL}/series/${seriesId}`);
 			if (!seriesResponse.ok) {
 			  throw new Error(`Response status: ${seriesResponse.status}`);
 			}
@@ -63,7 +63,7 @@ async function submitSeries() {
 		}
 	});
 	
-	const saveResponse = await fetch(saveRequest);
+	const saveResponse = await fetchWithRetry(saveRequest);
 	if (!saveResponse.ok) {
 		throw new Error(`Response status: ${saveResponse.status}`);
 	}

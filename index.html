@@ -4,7 +4,7 @@
 <body>
 	<link rel="stylesheet" href="styles.css"> 
 	<script src="jquery-3.7.1.min.js"></script>
-	<script src="config.js"></script>
+	<script src="shared.js"></script>
 	<script src="animelist.js"></script>
 	<div>
 		<button onclick="location.href='/allseries.html'">Manage series</button>
@@ -27,6 +27,18 @@
 		</div>
 		<div id="queryDropdowns">
 		</div>
+	</div>
+	<div class="controlContainer">
+		<label>Sort by:</label>
+		<select id="sortByDropdown" onChange="querySearch()">
+			<option>Select a column</option>
+			<option value="Random">Random</option>
+		</select>
+		<select id="orderDropdown" onChange="querySearch()">
+			<option value="asc">Ascending</option>
+			<option value="desc">Descending</option>
+		</select>
+		<button onClick="shuffleAnime()">Shuffle</button>
 	</div>
 	<table id="animetable"></table>
 </body>

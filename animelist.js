@@ -24,53 +24,59 @@ partnersList = [];
 queryCount = 0;
 
 $.when($.ready).then(async function() {
-	try {
-		const response = await fetch(`${baseURL}/allanime`);
-		if (!response.ok) {
-		  throw new Error(`Response status: ${response.status}`);
-		}
-		
-		const result = await response.json();
-		columns = result["message"]["columns"];
-		data = result["message"]["rows"]
-		
-		const partnersResponse = await fetch(`${baseURL}/watchpartners`);
-		if (!partnersResponse.ok) {
-			throw new Error(`Response status: ${partnersResponse.status}`);
-		}
-		
-		const partnersResult = await partnersResponse.json();
-		partnersList = partnersResult["message"]["rows"];
-		queryColumns["WatchPartners"] = partnersList;
-		queryColumns["WatchPartnersActive"] = partnersList;
-		
-		let partnersDropdown = $("#partnerSearch");
-		for (let row = 0; row < partnersList.length; row++) {
-			let rowData = partnersList[row];
-			partnersDropdown.append($(`<option value=${rowData[0]}>${rowData[1]}</option>`));
-		}
-		
-		const sourcesResponse = await fetch(`${baseURL}/sources`);
-		if (!sourcesResponse.ok) {
-		  throw new Error(`Response status: ${sourcesResponse.status}`);
-		}
-		
-		const sources = await sourcesResponse.json();
-		queryColumns["SourceId"] = sources["message"]["rows"];
-		
-		const tagsResponse = await fetch(`${baseURL}/tags`);
-		if (!tagsResponse.ok) {
-			throw new Error(`Response status: ${tagsResponse.status}`);
-		}
-		
-		const tagsData = await tagsResponse.json();
-		queryColumns["TagIds"] = tagsData["message"]["rows"];
-		
-		buildTable();
-	} catch (error) {
-		console.error(error.message);
+	const response = await fetchWithRetry(`${baseURL}/allanime`);
+	if (!response.ok) {
+	  throw new Error(`Response status: ${response.status}`);
 	}
+	
+	const result = await response.json();
+	columns = result["message"]["columns"];
+	data = result["message"]["rows"]
+	
+	const partnersResponse = await fetchWithRetry(`${baseURL}/watchpartners`);
+	if (!partnersResponse.ok) {
+		throw new Error(`Response status: ${partnersResponse.status}`);
+	}
+	
+	const partnersResult = await partnersResponse.json();
+	partnersList = partnersResult["message"]["rows"];
+	queryColumns["WatchPartners"] = partnersList;
+	queryColumns["WatchPartnersActive"] = partnersList;
+	
+	let partnersDropdown = $("#partnerSearch");
+	for (let row = 0; row < partnersList.length; row++) {
+		let rowData = partnersList[row];
+		partnersDropdown.append($(`<option value=${rowData[0]}>${rowData[1]}</option>`));
+	}
+	
+	const sourcesResponse = await fetchWithRetry(`${baseURL}/sources`);
+	if (!sourcesResponse.ok) {
+	  throw new Error(`Response status: ${sourcesResponse.status}`);
+	}
+	
+	const sources = await sourcesResponse.json();
+	queryColumns["SourceId"] = sources["message"]["rows"];
+	
+	const tagsResponse = await fetchWithRetry(`${baseURL}/tags`);
+	if (!tagsResponse.ok) {
+		throw new Error(`Response status: ${tagsResponse.status}`);
+	}
+	
+	const tagsData = await tagsResponse.json();
+	queryColumns["TagIds"] = tagsData["message"]["rows"];
+	
+	let sortDropdown = $("#sortByDropdown");
+	for (let col = 0; col < columns.length; col++) {
+		let columnName = columns[col];
+		sortDropdown.append($(`<option value=${columnName}>${displayRows[columnName] ? displayRows[columnName].displayName : columnName}</option>`));
+	}
+	
+	buildTable();
 });
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function find(row, column) {
 	return row[columns.findIndex((col) => col === column)]
@@ -91,6 +97,24 @@ function buildTable(queries) {
 	
 	let reviewIndex = columns.findIndex((col) => col === "Review");
 	let completionIndex = columns.findIndex((col) => col === "Completion");
+	
+	let sortColumn = $("#sortByDropdown").val();
+	let order = $("#orderDropdown").val();
+	if (columns.findIndex((a) => a === sortColumn) >= 0) {
+		data.sort(function (a, b) {
+			let sortIndex = columns.findIndex((a) => a === sortColumn);
+			if ((a[sortIndex] < b[sortIndex] && order == "asc") || (a[sortIndex] > b[sortIndex] && order == "desc")) {
+				return -1;
+			}
+			if ((a[sortIndex] > b[sortIndex] && order == "asc") || (a[sortIndex] < b[sortIndex] && order == "desc")) {
+				return 1;
+			}
+			return 0;
+		})
+	}
+	else if (sortColumn === "Random") {
+		shuffleArray(data);
+	}
 	
 	let isEven = true;
 	for (let row = 0; row < data.length; row++) {
@@ -265,5 +289,19 @@ async function presetQuery(queryData) {
 		let queryValue = newQuery.children(".queryValue");
 		if (queryValue.length > 0) queryValue.val(queryData[i][2]);
 	}
+	querySearch();
+}
+
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+function shuffleAnime() {
+	$("#sortByDropdown").val("Random");
 	querySearch();
 }

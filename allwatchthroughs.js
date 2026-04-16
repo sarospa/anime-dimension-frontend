@@ -8,7 +8,7 @@ columns = [];
 data = [];
 
 $.when($.ready).then(async function() {
-	const response = await fetch(`${baseURL}/allwatchthroughs`);
+	const response = await fetchWithRetry(`${baseURL}/allwatchthroughs`);
 	if (!response.ok) {
 	  throw new Error(`Response status: ${response.status}`);
 	}
@@ -17,7 +17,7 @@ $.when($.ready).then(async function() {
 	columns = result["message"]["columns"];
 	data = result["message"]["rows"];
 	
-	const partnersResponse = await fetch(`${baseURL}/watchpartners`);
+	const partnersResponse = await fetchWithRetry(`${baseURL}/watchpartners`);
 	if (!partnersResponse.ok) {
 		throw new Error(`Response status: ${partnersResponse.status}`);
 	}

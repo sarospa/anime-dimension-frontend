@@ -65,6 +65,11 @@ a:visited {
 	margin-top: 10px;
 }
 
+.controlContainer {
+	padding-left: 5px;
+	padding-top: 10px;
+}
+
 .largeButton {
 	height: 35px;
 	font-size: 20px;

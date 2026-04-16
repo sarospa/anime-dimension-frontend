@@ -1,1 +1,0 @@
-baseURL = "https://anime-dimension-production.up.railway.app"
